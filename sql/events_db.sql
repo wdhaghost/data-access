@@ -29,7 +29,7 @@ FLUSH PRIVILEGES;
 
 --PROCEDURES
 --1 Créer un évènement
-DELIMITER //;
+DELIMITER //
 CREATE PROCEDURE create_events(name CHAR(50),start_date DATE,end_date DATE,location VARCHAR(100),max_attendees INT)
     BEGIN
         INSERT into event VALUES (name,start_date,end_date,max_attendees,location);
@@ -44,7 +44,7 @@ CREATE FUNCTION is_full()
     END
 
 DELIMITER ;
-DELIMITER //;
+DELIMITER //
 CREATE PROCEDURE add_attendee(event_id INT, fn VARCHAR(30),ln VARCHAR(30))
     BEGIN
 
@@ -63,7 +63,7 @@ CREATE PROCEDURE add_attendee(event_id INT, fn VARCHAR(30),ln VARCHAR(30))
 DELIMITER ;
 
 --3 Désinscription avec nom prénom
-DELIMITER //;
+DELIMITER //
 CREATE PROCEDURE delete_attendee(event_id INT, fn VARCHAR(30),ln VARCHAR(30))
     BEGIN
         DELETE from attendee WHERE first_name = fn AND last_name = ln AND event_id = event_id LIMIT 1 ; 
@@ -71,7 +71,7 @@ CREATE PROCEDURE delete_attendee(event_id INT, fn VARCHAR(30),ln VARCHAR(30))
 DELIMITER ;
 
 --4 Suppr un évènement avec toutes les inscriptions
-DELIMITER //;
+DELIMITER //
 CREATE PROCEDURE delete_event(event_id INT)
     BEGIN
         DELETE from event WHERE id = event_id LIMIT 1 ; 
