@@ -47,7 +47,7 @@ CREATE FUNCTION is_full(actual_attendees INT, limit_attendees INT)
         RETURN actual_attendees >= limit_attendees;
     END//
 
-CREATE PROCEDURE add_attendee(p_event_id INT, fn VARCHAR(30), ln VARCHAR(30))
+CREATE PROCEDURE create_attendee(p_event_id INT, fn VARCHAR(30), ln VARCHAR(30))
     BEGIN
         DECLARE limit_attendees INT;
         DECLARE actual_attendees INT;
