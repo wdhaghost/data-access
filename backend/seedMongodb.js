@@ -1,3 +1,5 @@
+const {MongoClient} = require('mongodb');
+
 const readJsonFile = () => {
 
     const filePath = process.argv[2];
@@ -15,9 +17,8 @@ const readJsonFile = () => {
 }
 
 const insertInMongoDB = (json_data) => {
-    let Mongodb = require('mongodb').MongoClient;
 
-    Mongodb.connect("mongodb://localhost:27017/", function (err, db) {
+    MongoClient.connect("mongodb://localhost:27017/", function (err, db) {
         if (err) throw err;
         let dbo = db.db("mydb");
 
