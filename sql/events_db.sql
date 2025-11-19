@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS attendee (
 );
 
 -- Utilisateurs
-CREATE USER 'johndoe'@'localhost' IDENTIFIED BY 'password';
+CREATE USER IF NOT EXISTS 'johndoe'@'localhost' IDENTIFIED BY 'password';
 
 GRANT SELECT, EXECUTE ON events_db.* TO 'johndoe'@'localhost';
 
@@ -47,23 +47,21 @@ CREATE FUNCTION is_full(actual_attendees INT, limit_attendees INT)
         RETURN actual_attendees >= limit_attendees;
     END//
 
-CREATE PROCEDURE add_attendee(p_event_id INT, fn VARCHAR(30),ln VARCHAR(30))
+CREATE PROCEDURE add_attendee(p_event_id INT, fn VARCHAR(30), ln VARCHAR(30))
     BEGIN
+        DECLARE limit_attendees INT;
+        DECLARE actual_attendees INT;
 
-    DECLARE limit_attendees INT;
-    DECLARE actual_attendees INT;
+        SELECT max_attendees INTO limit_attendees FROM event WHERE id = p_event_id;
+        SELECT COUNT(*) INTO actual_attendees FROM attendee WHERE attendee.event_id = p_event_id;
 
-    SELECT max_attendees INTO limit_attendees FROM event WHERE id = p_event_id;
-    SELECT COUNT(*) INTO actual_attendees FROM attendee WHERE attendee.event_id = p_event_id;
-
-    IF NOT is_full(actual_attendees, limit_attendees) THEN
-        INSERT into attendee(event_id, first_name, last_name) VALUES (event_id,fn,ln);
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = "Il y a encore des places";
-    ELSE
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = "Evènement plein";
-    END IF;
+        IF NOT is_full(actual_attendees, limit_attendees) THEN
+            INSERT INTO attendee(event_id, first_name, last_name) VALUES (p_event_id, fn, ln);
+            SELECT 'Inscription réussie' AS message;
+        ELSE
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Evènement plein';
+        END IF;
     END//
 
 -- 3 Désinscription avec nom prénom
