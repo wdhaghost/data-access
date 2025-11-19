@@ -51,14 +51,6 @@ CREATE PROCEDURE delete_event(event_id INT)
         LIMIT 1 ; 
     END//
 
-CREATE TRIGGER 'delete_attendees'
-    AFTER DELETE ON 'event'
-    FOR EACH ROW
-    BEGIN
-        DELETE FROM attendee 
-        WHERE event_id = OLD.id;
-    END//
-
 -- 5 changer la date de début et de fin
 CREATE PROCEDURE update_date(event_id INT,new_start_date DATE ,new_end_date DATE)
     BEGIN
