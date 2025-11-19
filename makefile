@@ -29,3 +29,9 @@ update:
 
 restart:
 	docker-compose restart
+
+mysql:
+	@docker compose exec mysql mysql -u root -p${MYSQL_ROOT_PASSWORD} events_db
+	
+mongo:
+	@docker compose exec mongodb mongosh "mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@localhost:27017/events_db?authSource=admin"
