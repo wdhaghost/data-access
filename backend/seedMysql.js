@@ -55,7 +55,7 @@ try {
 
 function formatDocument(doc, format) {
 
-    if (format == "LIVETICKET") {
+    if (format === "LIVETICKET") {
         return {
             name: doc.event,
             start: doc.start,
@@ -70,7 +70,7 @@ function formatDocument(doc, format) {
         };
     }
 
-    if (format == "TRUEREGISTER") {
+    if (format === "TRUEREGISTER") {
         const e = doc.results[0].event;
         return {
             name: e.event_name,
@@ -85,7 +85,7 @@ function formatDocument(doc, format) {
         };
     }
 
-    if (format == "DISIFINE") {
+    if (format === "DISIFINE") {
         const rawAttendees = JSON.parse(doc.attendees);
 
         return {
