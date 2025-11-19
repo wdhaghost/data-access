@@ -35,3 +35,33 @@ mysql:
 	
 mongo:
 	@docker compose exec mongodb mongosh "mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@localhost:27017/events_db?authSource=admin"
+
+backend: 
+	@docker compose exec node sh
+
+node-install:
+	@docker compose exec node npm install
+
+node-logs:
+	@docker compose logs -f node
+
+seed-mongo:
+	@if [ -z "$(file)" ]; then \
+		echo "❌ Erreur: Vous devez spécifier un fichier. Exemple: make seed-mongo file=disifine.json"; \
+		exit 1; \
+	fi
+	@echo "🌱 Chargement des données dans MongoDB..."
+	@docker compose exec node node seedMongodb.js /app/json/$(file)
+	@echo "✅ Seed terminé!"
+
+seed-disisfine:
+	@echo "🌱 Chargement de disisfine.json dans MongoDB..."
+	@docker compose exec node node seedMongodb.js /app/json/disisfine.json
+
+seed-liveticket:
+	@echo "🌱 Chargement de liveticket.json dans MongoDB..."
+	@docker compose exec node node seedMongodb.js /app/json/liveticket.json
+
+seed-truegister:
+	@echo "🌱 Chargement de truegister.json dans MongoDB..."
+	@docker compose exec node node seedMongodb.js /app/json/truegister.json

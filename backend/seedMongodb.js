@@ -1,5 +1,13 @@
 const {MongoClient} = require('mongodb');
 
+const config = {
+    username: process.env.MONGO_USERNAME || 'admin',
+    password: process.env.MONGO_PASSWORD || 'adminpassword',
+    host: process.env.MONGO_HOST || 'localhost',
+    port: process.env.MONGO_PORT || '27017',
+    database: process.env.MONGO_DATABASE || 'events_db'
+};
+
 const readJsonFile = () => {
 
     const filePath = process.argv[2];
@@ -16,22 +24,42 @@ const readJsonFile = () => {
     }
 }
 
-const insertInMongoDB = (json_data) => {
+const insertInMongoDB = async (json_data) => {
+    const uri = `mongodb://${config.username}:${config.password}@${config.host}:${config.port}/?authSource=admin`;
 
-    MongoClient.connect("mongodb://localhost:27017/", function (err, db) {
-        if (err) throw err;
-        let dbo = db.db("mydb");
+    const client = new MongoClient(uri);
 
-        json_data.forEach(item => {
-            dbo.collection("events").insertOne(item, function (err, res) {
-                if (err) throw err;
-                console.log("1 document inserted");
-            });
-        });
+    try {
+        await client.connect();
+        console.log(`Connecté à MongoDB sur ${config.host}:${config.port}`);
 
-        db.close();
-    });
+        const db = client.db(config.database);
+        const collection = db.collection("events");
+
+        let dataToInsert;
+        if (Array.isArray(json_data)) {
+            dataToInsert = json_data;
+        } else if (json_data.results && Array.isArray(json_data.results)) {
+            dataToInsert = json_data.results;
+        } else {
+            dataToInsert = [json_data];
+        }
+
+        const result = await collection.insertMany(dataToInsert);
+        console.log(`${result.insertedCount} document(s) inséré(s) dans la base '${config.database}', collection 'events'`);
+
+    } catch (err) {
+        console.error("Erreur lors de l'insertion:", err.message);
+        process.exit(1);
+    } finally {
+        await client.close();
+        console.log("Connexion fermée");
+    }
 }
 
-
-insertInMongoDB(readJsonFile())
+(async () => {
+    const jsonData = readJsonFile();
+    if (jsonData) {
+        await insertInMongoDB(jsonData);
+    }
+})()
