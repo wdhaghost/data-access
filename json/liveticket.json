@@ -1,0 +1,12 @@
+{
+  "event": "Mon event",
+  "start": "2024-10-05 16:00:00",
+  "end": "2024-10-05 20:00:00",
+  "max": 10,
+  "where": "1 rue truc - 75010 Machin",
+  "attendees": [
+    { "fn": "John", "ln": "Doe", "when": "2023-03-12" },
+    { "fn": "Jane", "ln": "Dae", "when": "2023-03-14" },
+    { "fn": "Jerry", "ln": "Due", "when": "2023-04-15" },
+  ]
+}
