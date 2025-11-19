@@ -1,0 +1,8 @@
+{
+  "e_name": "Mon event",
+  "e_start": "2024-10-05 16:00:00",
+  "e_finish": "2024-10-05 20:00:00",
+  "e_location": "1 rue truc - 75010 Machin",
+  "e_attendees_max": 10,
+  "attendees": "[[\"John\", \"Doe\", \"2023-03-12\"],[\"Jane\", \"Dae\", \"2023-03-12\",[\"Jerry\", \"Due\", \"2023-04-15\"]]"
+}

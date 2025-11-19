@@ -1,0 +1,17 @@
+{
+  "results": [
+    {
+      "event": {
+        "event_name": "Mon event",
+        "event_begin": "2024-10-05 16:00:00",
+        "event_finish": "2024-10-05 20:00:00",
+        "event_where": "1 rue truc - 75010 Machin",
+      },
+      "attendees": [
+        { "attendee_1": "John", "attendee_2": "Doe" },
+        { "attendee_1": "Jane", "attendee_2": "Dae" },
+        { "attendee_1": "Jerry", "attendee_2": "Due" },
+      ]
+    }
+  ]
+}
