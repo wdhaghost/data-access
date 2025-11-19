@@ -85,7 +85,7 @@ function formatDocument(doc, format) {
         };
     }
 
-    if (format === "DISIFINE") {
+    if (format === "DISISFINE") {
         const rawAttendees = JSON.parse(doc.attendees);
 
         return {
