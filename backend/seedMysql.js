@@ -1,57 +1,78 @@
+import { MongoClient } from "mongodb";
 import mysql from "mysql2/promise";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const mysqlConfig = {
-    host: "",
-    user: "",
-    password: "",
-    database: ""
+    host: process.env.MYSQL_HOST || "localhost",
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE
 };
 
-const mysqlConn = await mysql.createConnection(mysqlConfig);
+const mongoClient = new MongoClient(process.env.MONGO_URI);
+const mongoDbName = process.env.MONGO_DATABASE;
 
-try {
+async function main() {
+    const mysqlConn = await mysql.createConnection(mysqlConfig);
 
-    const docs = [];
+    try {
+        await mongoClient.connect();
+        const db = mongoClient.db(mongoDbName);
 
-    for (const doc of docs) {
+        const liveDocs = await db.collection("liveticket").find({}).toArray();
+        const trueDocs = await db.collection("trueregister").find({}).toArray();
+        const disiDocs = await db.collection("disisfine").find({}).toArray();
 
-        const normalized = formatDocument(doc, format);
-
-        await mysqlConn.execute(
-            `CALL create_events(?, ?, ?, ?, ?);`,
-            [
-                normalized.name,
-                normalized.start,
-                normalized.end,
-                normalized.location,
-                normalized.max
-            ]
-        );
-
-
-        const [[lastId]] = await mysqlConn.execute(
-            `SELECT LAST_INSERT_ID() AS id;`
-        );
-
-        const eventId = lastId.id;
-        for (const a of normalized.attendees) {
-
-            await mysqlConn.execute(
-                `CALL add_attendee(?, ?, ?);`,
-                [eventId, a.fn, a.ln]
-            );
-
+        for (const doc of liveDocs) {
+            await migrateDoc(mysqlConn, doc, "LIVETICKET");
         }
 
-        console.log("✔ Importé :", normalized.name);
-    }
+        for (const doc of trueDocs) {
+            await migrateDoc(mysqlConn, doc, "TRUEREGISTER");
+        }
 
-} catch (err) {
-    console.error("Erreur :", err);
-} finally {
-    await mysqlConn.end();
+        for (const doc of disiDocs) {
+            await migrateDoc(mysqlConn, doc, "DISISFINE");
+        }
+
+        console.log("Migration terminée");
+    } catch (err) {
+        console.error("Erreur :", err);
+    } finally {
+        await mongoClient.close();
+        await mysqlConn.end();
+    }
 }
 
+async function migrateDoc(mysqlConn, doc, format) {
+    const normalized = formatDocument(doc, format);
+
+    await mysqlConn.execute(
+        `CALL create_events(?, ?, ?, ?, ?);`,
+        [
+            normalized.name,
+            normalized.start,
+            normalized.end,
+            normalized.location,
+            normalized.max
+        ]
+    );
+
+    const [[lastId]] = await mysqlConn.execute(
+        `SELECT LAST_INSERT_ID() AS id;`
+    );
+
+    const eventId = lastId.id;
+
+    for (const a of normalized.attendees) {
+        await mysqlConn.execute(
+            `CALL add_attendee(?, ?, ?);`,
+            [eventId, a.fn, a.ln]
+        );
+    }
+}
 
 function formatDocument(doc, format) {
 
@@ -62,7 +83,7 @@ function formatDocument(doc, format) {
             end: doc.end,
             max: doc.max,
             location: doc.where,
-            attendees: doc.attendees.map(a => ({
+            attendees: (doc.attendees || []).map(a => ({
                 fn: a.fn,
                 ln: a.ln,
                 when: a.when
@@ -78,15 +99,15 @@ function formatDocument(doc, format) {
             end: e.event_finish,
             location: e.event_where,
             max: null,
-            attendees: doc.results[0].attendees.map(a => ({
+            attendees: (doc.results[0].attendees || []).map(a => ({
                 fn: a.attendee_1,
-                ln: a.attendee_2,
+                ln: a.attendee_2
             }))
         };
     }
 
     if (format === "DISISFINE") {
-        const rawAttendees = JSON.parse(doc.attendees);
+        const rawAttendees = JSON.parse(doc.attendees || "[]");
 
         return {
             name: doc.e_name,
@@ -94,7 +115,6 @@ function formatDocument(doc, format) {
             end: doc.e_finish,
             location: doc.e_location,
             max: doc.e_attendees_max,
-
             attendees: rawAttendees.map(a => ({
                 fn: a[0],
                 ln: a[1],
@@ -103,5 +123,7 @@ function formatDocument(doc, format) {
         };
     }
 
-    throw new Error("Format Mongo inconnu : " + JSON.stringify(doc));
+    throw new Error("Format inconnu");
 }
+
+main();
