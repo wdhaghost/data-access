@@ -17,7 +17,7 @@ try {
 
         const normalized = formatDocument(doc, format);
 
-        await mysqlConn.query(
+        await mysqlConn.execute(
             `CALL create_events(?, ?, ?, ?, ?);`,
             [
                 normalized.name,
@@ -29,14 +29,14 @@ try {
         );
 
 
-        const [[lastId]] = await mysqlConn.query(
+        const [[lastId]] = await mysqlConn.execute(
             `SELECT LAST_INSERT_ID() AS id;`
         );
 
         const eventId = lastId.id;
         for (const a of normalized.attendees) {
 
-            await mysqlConn.query(
+            await mysqlConn.execute(
                 `CALL add_attendee(?, ?, ?);`,
                 [eventId, a.fn, a.ln]
             );
