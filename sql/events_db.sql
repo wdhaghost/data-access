@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS event  (
     end_date DATE NOT NULL,
     max_attendees INT NOT NULL,
     location VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL
 )
 
@@ -21,27 +21,30 @@ CREATE TABLE IF NOT EXISTS attendee (
     registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE
 );
+
 --Utilisateurs
 CREATE USER 'johndoe'@'localhost' IDENTIFIED BY 'password';
-GRANT SELECT,CALL ON event. * TO 'johndoe'@'localhost';
-GRANT SELECT,CALL ON attendee. * TO 'johndoe'@'localhost';
+GRANT SELECT,CALL ON events_db. * TO 'johndoe'@'localhost';
 FLUSH PRIVILEGES;
 
 --PROCEDURES
 --1 Créer un évènement
 DELIMITER //
-CREATE PROCEDURE create_events(name CHAR(50),start_date DATE,end_date DATE,location VARCHAR(100),max_attendees INT)
+CREATE PROCEDURE create_events(new_name CHAR(50), new_start_date DATE, new_end_date DATE, new_location VARCHAR(100), new_max_attendees INT)
     BEGIN
-        INSERT into event VALUES (name,start_date,end_date,max_attendees,location);
+        INSERT INTO event(name, start_date, end_date, max_attendees, location) 
+        VALUES (new_name, new_start_date, new_end_date, new_max_attendees, new_location);
     END //
 DELIMITER ;
 
 --2 Inscription à un évènement (échec si max pers)
 DELIMITER // 
-CREATE FUNCTION is_full()
+CREATE FUNCTION is_full(actual_attendees INT, limit_attendees INT)
+    RETURNS VARCHAR(50)
+    DETERMINISTIC
     BEGIN
-        RETURN 'Evènement plein'
-    END
+        RETURN actual_attendees >= limit_attendees
+    END //
 
 DELIMITER ;
 DELIMITER //
@@ -54,10 +57,11 @@ CREATE PROCEDURE add_attendee(event_id INT, fn VARCHAR(30),ln VARCHAR(30))
     SELECT max_attendees INTO limit_attendees FROM event WHERE id = event_id;
     SELECT COUNT(*) INTO actual_attendees FROM attendee WHERE event_id = event_id;
 
-    IF actual_attendees < limit_attendees
+    IF NOT is_full(actual_attendees, limit_attendees) THEN
         INSERT into attendee VALUES (event_id,fn,ln);
+        SET MESSAGE_TEXT = "Il y a encore des places"
     ELSE
-        SELECT is_full();
+        SET MESSAGE_TEXT = "Evènement plein"
     END IF
     END//
 DELIMITER ;
