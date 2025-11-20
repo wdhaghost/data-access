@@ -33,9 +33,7 @@ restart:
 mysql:
 	@docker compose exec mysql mysql -u root -p${MYSQL_ROOT_PASSWORD} events_db
 	
-mongo:
-	@docker compose exec mongodb mongosh "mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@localhost:27017/events_db?authSource=admin"
-
+# ====== NODE ====== #
 backend: 
 	@docker compose exec node sh
 
@@ -44,7 +42,11 @@ node-install:
 
 node-logs:
 	@docker compose logs -f node
+
 # ====== MONGODB ====== #
+mongo:
+	@docker compose exec mongodb mongosh "mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@localhost:27017/events_db?authSource=admin"
+
 seed-mongo:
 	@if [ -z "$(file)" ]; then \
 		echo "❌ Erreur: Vous devez spécifier un fichier. Exemple: make seed-mongo file=disisfine.json"; \
@@ -67,6 +69,9 @@ seed-truegister:
 	@docker compose exec node node seedMongodb.js /app/json/truegister.json truegister
 
 # ====== MySQL ====== #
+mysql:
+	@docker compose exec mysql mysql -u root -p${MYSQL_ROOT_PASSWORD} events_db
+	
 seed-mysql:
 	@echo "🔄 Migration MongoDB → MySQL..."
 	@docker compose exec node node seedMysql.js
