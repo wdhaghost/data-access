@@ -1,5 +1,5 @@
 
-const {mysql} = require("mysql2/promise");
+const mysql = require("mysql2/promise");
 const {MongoClient} = require("mongodb");
 const dotenv = require("dotenv");
 
