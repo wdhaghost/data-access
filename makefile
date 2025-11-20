@@ -32,7 +32,12 @@ restart:
 
 mysql:
 	@docker compose exec mysql mysql -u root -p${MYSQL_ROOT_PASSWORD} events_db
-	
+
+drop-db:
+	@echo "💥 Suppression de la base events_db..."
+	@docker compose exec -T mysql mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "DROP DATABASE IF EXISTS events_db;"
+	@echo "✅ Base supprimée!"
+
 # ====== NODE ====== #
 backend: 
 	@docker compose exec node sh
