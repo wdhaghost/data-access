@@ -24,7 +24,7 @@ CREATE PROCEDURE create_attendee(p_event_id INT, fn VARCHAR(30), ln VARCHAR(30))
         SELECT max_attendees INTO limit_attendees FROM event WHERE id = p_event_id;
         SELECT COUNT(*) INTO actual_attendees FROM attendee WHERE attendee.event_id = p_event_id;
 
-        IF NOT is_full(actual_attendees, limit_attendees) THEN
+        IF limit_attendees IS NULL OR NOT  is_full(actual_attendees, limit_attendees) THEN
             INSERT INTO attendee(event_id, first_name, last_name) VALUES (p_event_id, fn, ln);
             SELECT 'Inscription réussie' AS message;
         ELSE
@@ -53,10 +53,46 @@ CREATE PROCEDURE delete_event(event_id INT)
 
 -- 5 changer la date de début et de fin
 CREATE PROCEDURE update_date(event_id INT,new_start_date DATE ,new_end_date DATE)
+    IF NOT IsEventExists(event_id) THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'L\'événement n\'existe pas.';
+    END IF;
+
+    IF IsEventDateValid(new_start_date, new_end_date) THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'La date de fin ne peut pas être inférieure à la date de début.';
+    END IF;
     BEGIN
         UPDATE event 
         SET start_date = new_start_date, end_date = new_end_date 
         WHERE id = event_id;
     END//
 
+CREATE FUNCTION IsEventDateValid(event_id INT, new_start_date DATE, new_end_date DATE)
+    RETURNS BOOLEAN
+    DETERMINISTIC
+    BEGIN
+        IF new_end_date < new_start_date HEN
+            RETURN FALSE;
+        ELSE
+            RETURN TRUE;
+        END IF;
+    END
+
+CREATE FUNCTION IsEventExists(event_id INT)
+    RETURNS BOOLEAN
+    DETERMINISTIC
+    BEGIN
+        DECLARE event_exists INT DEFAULT 0;
+
+        SELECT COUNT(*) INTO event_exists
+        FROM event
+        WHERE id = event_id;
+
+        IF event_exists = 0 THEN
+            RETURN FALSE;
+        ELSE
+            RETURN TRUE;
+        END IF;
+    END
 DELIMITER ;
