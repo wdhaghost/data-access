@@ -56,15 +56,15 @@ seed-mongo:
 
 seed-disisfine:
 	@echo "🌱 Chargement de disisfine.json dans MongoDB..."
-	@docker compose exec node node seedMongodb.js /app/json/disisfine.json
+	@docker compose exec node node seedMongodb.js /app/json/disisfine.json disisfine
 
 seed-liveticket:
 	@echo "🌱 Chargement de liveticket.json dans MongoDB..."
-	@docker compose exec node node seedMongodb.js /app/json/liveticket.json
+	@docker compose exec node node seedMongodb.js /app/json/liveticket.json liveticket
 
 seed-truegister:
 	@echo "🌱 Chargement de truegister.json dans MongoDB..."
-	@docker compose exec node node seedMongodb.js /app/json/truegister.json
+	@docker compose exec node node seedMongodb.js /app/json/truegister.json truegister
 
 # ====== MySQL ====== #
 seed-mysql:
