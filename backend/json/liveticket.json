@@ -1,7 +1,7 @@
 {
-  "event": "Mon event",
-  "start": "2024-10-05 16:00:00",
-  "end": "2024-10-05 20:00:00",
+  "event": "Mon event Liveticket",
+  "start": "2024-10-12 16:00:00",
+  "end": "2024-10-12 20:00:00",
   "max": 10,
   "where": "1 rue truc - 75010 Machin",
   "attendees": [
