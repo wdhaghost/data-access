@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS event (
     name VARCHAR(50) NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    max_attendees INT NOT NULL,
+    max_attendees INT NULL,
     location VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL

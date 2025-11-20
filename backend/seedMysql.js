@@ -60,7 +60,7 @@ async function main() {
 
 async function migrateDoc(mysqlConn, doc, format) {
     const normalized = formatDocument(doc, format);
-
+    console.log("Inserting event:"+format, normalized);
         await mysqlConn.execute(
         `CALL create_events(?, ?, ?, ?, ?);`,
         [
@@ -94,7 +94,6 @@ async function migrateDoc(mysqlConn, doc, format) {
 }
 
 function formatDocument(doc, format) {
-
     if (format === "LIVETICKET") {
         return {
             name: doc.event,
@@ -105,23 +104,21 @@ function formatDocument(doc, format) {
             attendees: (doc.attendees || []).map(a => ({
                 fn: a.fn,
                 ln: a.ln,
-                when: a.when
             }))
         };
     }
 
     if (format === "TRUEGISTER") {
-        const e = doc.results[0].event;
+        const e = doc
         return {
-            name: e.event_name,
-            start: e.event_begin,
-            end: e.event_finish,
-            location: e.event_where,
-            max: null,
-            attendees: (doc.results[0].attendees || []).map(a => ({
+            name: e.event.event_name,
+            start: e.event.event_begin,
+            end: e.event.event_finish,
+            location: e.event.event_where,
+            max: e.event.max ? e.event.max: 0,
+            attendees: (e.attendees || []).map(a => ({
                 fn: a.attendee_1,
                 ln: a.attendee_2,
-                when: new Date().toISOString().split('T')[0]
             }))
         };
     }
@@ -137,8 +134,7 @@ function formatDocument(doc, format) {
             max: doc.e_attendees_max,
             attendees: rawAttendees.map(a => ({
                 fn: a[0],
-                ln: a[1],
-                when: a[2]
+                ln: a[1]
             }))
         };
     }
