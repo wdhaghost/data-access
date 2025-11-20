@@ -8,13 +8,18 @@ const config = {
     database: process.env.MONGO_DATABASE || 'events_db'
 };
 
+let collection_type
+
 const readJsonFile = () => {
 
     const filePath = process.argv[2];
-    if (!filePath) {
-        console.error("Veuillez ajouter un fichier JSON en paramètre. Exemple: .node read-json.js data.json");
+    collection_type = process.argv[3];
+
+    if (!filePath || !['liveticket', 'disisfine', 'truegister'].includes(collection_type)) {
+        console.error("Veuillez ajouter un fichier JSON en paramètre et une collection (liveticket/disisfine/truegister). Exemple: .node read-json.js data.json liveticket");
         process.exit(1);
     }
+    
 
     try {
         const raw = require("fs").readFileSync(filePath, "utf-8");
@@ -34,7 +39,7 @@ const insertInMongoDB = async (json_data) => {
         console.log(`Connecté à MongoDB sur ${config.host}:${config.port}`);
 
         const db = client.db(config.database);
-        const collection = db.collection("events");
+        const collection = db.collection(collection_type);
 
         let dataToInsert;
         if (Array.isArray(json_data)) {
