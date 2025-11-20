@@ -1,6 +1,8 @@
-import { MongoClient } from "mongodb";
-import mysql from "mysql2/promise";
-import dotenv from "dotenv";
+
+const {mysql} = require("mysql2/promise");
+const {MongoClient} = require("mongodb");
+const dotenv = require("dotenv");
+
 
 dotenv.config();
 
