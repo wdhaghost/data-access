@@ -44,7 +44,7 @@ node-install:
 
 node-logs:
 	@docker compose logs -f node
-
+# ====== MONGODB ====== #
 seed-mongo:
 	@if [ -z "$(file)" ]; then \
 		echo "❌ Erreur: Vous devez spécifier un fichier. Exemple: make seed-mongo file=disisfine.json"; \
@@ -65,3 +65,9 @@ seed-liveticket:
 seed-truegister:
 	@echo "🌱 Chargement de truegister.json dans MongoDB..."
 	@docker compose exec node node seedMongodb.js /app/json/truegister.json
+
+# ====== MySQL ====== #
+seed-mysql:
+	@echo "🔄 Migration MongoDB → MySQL..."
+	@docker compose exec node node seedMysql.js
+	@echo "✅ Migration terminée!"
