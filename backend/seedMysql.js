@@ -80,7 +80,7 @@ async function migrateDoc(mysqlConn, doc, format) {
 
     for (const a of normalized.attendees) {
         await mysqlConn.execute(
-            `CALL add_attendee(?, ?, ?);`,
+            `CALL create_attendee(?, ?, ?);`,
             [eventId, a.fn, a.ln]
         );
     }
