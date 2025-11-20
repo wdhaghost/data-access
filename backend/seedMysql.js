@@ -27,8 +27,8 @@ const mongoClient = new MongoClient(uri);
 const mongoDbName = process.env.MONGO_DATABASE;
 
 async function main() {
+    
     const mysqlConn = await mysql.createConnection(mysqlConfig);
-
     try {
         await mongoClient.connect();
         const db = mongoClient.db(mongoDbName);
@@ -61,7 +61,7 @@ async function main() {
 async function migrateDoc(mysqlConn, doc, format) {
     const normalized = formatDocument(doc, format);
 
-    await mysqlConn.execute(
+        await mysqlConn.execute(
         `CALL create_events(?, ?, ?, ?, ?);`,
         [
             normalized.name,
@@ -71,12 +71,19 @@ async function migrateDoc(mysqlConn, doc, format) {
             normalized.max
         ]
     );
+   
 
-    const [[lastId]] = await mysqlConn.execute(
-        `SELECT LAST_INSERT_ID() AS id;`
+    const [rows] = await mysqlConn.execute(
+        `SELECT id FROM event WHERE name = ? ORDER BY id DESC LIMIT 1;`,
+        [normalized.name]
     );
 
-    const eventId = lastId.id;
+    if (rows.length === 0) {
+        console.error("Aucun event trouvé pour", normalized.name);
+        return;
+    }
+
+    const eventId = rows[0].id;
 
     for (const a of normalized.attendees) {
         await mysqlConn.execute(
