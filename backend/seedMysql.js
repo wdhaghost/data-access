@@ -60,7 +60,6 @@ async function main() {
 
 async function migrateDoc(mysqlConn, doc, format) {
     const normalized = formatDocument(doc, format);
-    console.log("Inserting event:"+format, normalized);
         await mysqlConn.execute(
         `CALL create_events(?, ?, ?, ?, ?);`,
         [
