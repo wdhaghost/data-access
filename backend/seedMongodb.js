@@ -51,7 +51,7 @@ const insertInMongoDB = async (json_data) => {
         }
 
         const result = await collection.insertMany(dataToInsert);
-        console.log(`${result.insertedCount} document inséré dans la base '${config.database}', collection: ${collection}`);
+        console.log(`${result.insertedCount} document inséré dans la base '${config.database}', collection: ${collection_type}`);
 
     } catch (err) {
         console.error("Erreur lors de l'insertion:", err.message);
