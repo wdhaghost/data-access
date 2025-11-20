@@ -13,7 +13,17 @@ const mysqlConfig = {
     database: process.env.MYSQL_DATABASE
 };
 
-const mongoClient = new MongoClient(process.env.MONGO_URI);
+const config = {
+    username: process.env.MONGO_USERNAME || 'admin',
+    password: process.env.MONGO_PASSWORD || 'adminpassword',
+    host: process.env.MONGO_HOST || 'localhost',
+    port: process.env.MONGO_PORT || '27017',
+    database: process.env.MONGO_DATABASE || 'events_db'
+};
+
+
+const uri = `mongodb://${config.username}:${config.password}@${config.host}:${config.port}/?authSource=admin`;
+const mongoClient = new MongoClient(uri);
 const mongoDbName = process.env.MONGO_DATABASE;
 
 async function main() {
