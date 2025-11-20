@@ -34,7 +34,7 @@ async function main() {
         const db = mongoClient.db(mongoDbName);
 
         const liveDocs = await db.collection("liveticket").find({}).toArray();
-        const trueDocs = await db.collection("trueregister").find({}).toArray();
+        const trueDocs = await db.collection("truegister").find({}).toArray();
         const disiDocs = await db.collection("disisfine").find({}).toArray();
 
         for (const doc of liveDocs) {
@@ -42,7 +42,7 @@ async function main() {
         }
 
         for (const doc of trueDocs) {
-            await migrateDoc(mysqlConn, doc, "TRUEREGISTER");
+            await migrateDoc(mysqlConn, doc, "TRUEGISTER");
         }
 
         for (const doc of disiDocs) {
@@ -103,7 +103,7 @@ function formatDocument(doc, format) {
         };
     }
 
-    if (format === "TRUEREGISTER") {
+    if (format === "TRUEGISTER") {
         const e = doc.results[0].event;
         return {
             name: e.event_name,
@@ -113,7 +113,8 @@ function formatDocument(doc, format) {
             max: null,
             attendees: (doc.results[0].attendees || []).map(a => ({
                 fn: a.attendee_1,
-                ln: a.attendee_2
+                ln: a.attendee_2,
+                when: new Date().toISOString().split('T')[0]
             }))
         };
     }
