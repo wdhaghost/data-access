@@ -47,8 +47,12 @@ app.get("/events/:id", async (req, res) => {
     if (rows.length === 0) {
       return res.status(404).json({ error: "Évènement introuvable" });
     }
-
-    res.json(rows[0]);
+    
+    formatedEvent = rows[0];
+    const attendees = await execute("SELECT COUNT(*) AS count FROM attendee WHERE event_id = ?",[formatedEvent.id]);
+    const currentAttendees = attendees[0]?.count || 0;
+    formatedEvent.is_full = formatedEvent.max_attendees !== null ? formatedEvent.max_attendees <= currentAttendees : false;
+    res.json(formatedEvent);
   } catch (err) {
     console.error("GET /events/:id error:", err);
     res.status(500).json({ error: "Erreur serveur" });
@@ -121,7 +125,7 @@ app.delete("/events/:id", async (req, res) => {
   }
 });
 
-app.put("/events/:id/dates", async (req, res) => {
+app.put("/events/:id", async (req, res) => {
   const eventId = parseInt(req.params.id, 10);
   const { start_date, end_date } = req.body;
 
@@ -142,7 +146,7 @@ app.put("/events/:id/dates", async (req, res) => {
 
     res.json({ message: "Dates mises à jour" });
   } catch (err) {
-    console.error("PUT /events/:id/dates error:", err);
+    console.error("PUT /events/:id error:", err);
 
     if (err.errno === 1644) {
       // dates invalides ou évènement introuvable
@@ -177,21 +181,21 @@ app.get("/events/:id/attendees", async (req, res) => {
 
 app.post("/events/:id/attendees", async (req, res) => {
   const eventId = parseInt(req.params.id, 10);
-  const { first_name, last_name } = req.body;
+  const { firstname, lastname } = req.body;
 
   if (!Number.isInteger(eventId)) {
     return res.status(400).json({ error: "event id invalide" });
   }
 
-  if (!first_name || !last_name) {
-    return res.status(400).json({ error: "first_name et last_name requis" });
+  if (!firstname || !lastname) {
+    return res.status(400).json({ error: "firstname et lastname requis" });
   }
 
   try {
     const rows = await execute("CALL create_attendee(?, ?, ?)", [
       eventId,
-      first_name,
-      last_name,
+      firstname,
+      lastname,
     ]);
 
     let message = "Inscription réussie";
@@ -220,21 +224,21 @@ app.post("/events/:id/attendees", async (req, res) => {
 
 app.delete("/events/:id/attendees", async (req, res) => {
   const eventId = parseInt(req.params.id, 10);
-  const { first_name, last_name } = req.body;
+  const { firstname, lastname } = req.body;
 
   if (!Number.isInteger(eventId)) {
     return res.status(400).json({ error: "event id invalide" });
   }
 
-  if (!first_name || !last_name) {
-    return res.status(400).json({ error: "first_name et last_name requis" });
+  if (!firstname || !lastname) {
+    return res.status(400).json({ error: "firstname et lastname requis" });
   }
 
   try {
     await execute("CALL delete_attendee(?, ?, ?)", [
       eventId,
-      first_name,
-      last_name,
+      firstname,
+      lastname,
     ]);
 
     res.json({ message: "Participant désinscrit" });
