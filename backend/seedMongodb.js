@@ -49,7 +49,7 @@ const insertInMongoDB = async (json_data) => {
             dataToInsert = [json_data];
         }
 
-        const result = await collection.insertMany(dataToInsert);
+        await collection.insertMany(dataToInsert);
 
     } catch (err) {
         console.error("Erreur lors de l'insertion:", err.message);
