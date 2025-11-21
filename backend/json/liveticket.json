@@ -3,7 +3,7 @@
   "start": "2024-10-12 16:00:00",
   "end": "2024-10-12 20:00:00",
   "max": 10,
-  "where": "1 rue truc - 75010 Machin",
+  "where": "1 rue du vieux port - 13000 Marseille",
   "attendees": [
     { "fn": "John", "ln": "Doe", "when": "2023-03-12" },
     { "fn": "Jane", "ln": "Dae", "when": "2023-03-14" },
