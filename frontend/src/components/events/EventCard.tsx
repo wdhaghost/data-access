@@ -11,6 +11,7 @@ import type { EventType } from "@/types/EventType";
 import EventRegistrationModal from "./EventRegistrationModal";
 import { formatDate } from "@/services/formatDate";
 import { fetchApi } from "@/lib/utils";
+import { playSuccessSound } from "@/lib/sound";
 
 export default function EventCard({
   eventId,
@@ -54,6 +55,7 @@ export default function EventCard({
         setErrorMessage(error);
       } else if (data) {
         setSuccessMessage(data.message || "Inscription réussie !");
+        playSuccessSound();
         setFirstName("");
         setLastName("");
 
@@ -79,7 +81,7 @@ export default function EventCard({
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-2 pb-3">
+      <CardContent className="space-y-2 pb-3 min-h-[120px]">
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div className="flex items-center gap-2 text-gray-600">
             <Calendar className="w-4 h-4 text-blue-500 shrink-0" />

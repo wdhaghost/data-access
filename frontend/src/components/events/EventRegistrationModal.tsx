@@ -57,7 +57,7 @@ export default function EventRegistrationModal({
   return (
     <Dialog open={showForm} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="w-full">Participer à l'évènement</Button>
+        <Button className="w-full hover:bg-green-600 transition-all duration-200">Participer à l'évènement</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -125,6 +125,7 @@ export default function EventRegistrationModal({
             type="button"
             onClick={handleAddAttendeeToEvent}
             disabled={isLoading}
+            className="hover:bg-green-600 transition-all duration-200"
           >
             {isLoading ? <Spinner /> : "S'inscrire"}
           </Button>
