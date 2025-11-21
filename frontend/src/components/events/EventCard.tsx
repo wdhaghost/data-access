@@ -11,6 +11,7 @@ import type { EventType } from "@/types/EventType";
 import EventRegistrationModal from "./EventRegistrationModal";
 import { formatDate } from "@/services/formatDate";
 import { fetchApi } from "@/lib/utils";
+import { playSuccessSound } from "@/lib/sound";
 
 export default function EventCard({
   eventId,
@@ -54,6 +55,7 @@ export default function EventCard({
         setErrorMessage(error);
       } else if (data) {
         setSuccessMessage(data.message || "Inscription réussie !");
+        playSuccessSound();
         setFirstName("");
         setLastName("");
 
