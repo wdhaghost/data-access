@@ -8,15 +8,12 @@
 
 ## Introduction
 
-Cet environnement fournit une stack complète pour le développement :
-
 - **Backend** : Node.js / Express
 - **Frontend** : React (Vite)
 - **Base SQL** : MySQL
 - **Base NoSQL** : MongoDB
 - **Automatisation** : Makefile
 
-L’objectif : disposer d’une architecture claire, stable et reproductible pour coder sereinement.
 
 ---
 
