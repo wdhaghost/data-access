@@ -24,7 +24,11 @@ CREATE FUNCTION is_full(actual_attendees INT, limit_attendees INT)
     RETURNS BOOLEAN
     DETERMINISTIC
     BEGIN
-        RETURN actual_attendees >= limit_attendees;
+        IF limit_attendees IS NULL THEN
+        RETURN FALSE;
+        ELSE
+            RETURN actual_attendees >= limit_attendees;
+        END IF;
     END//
 
 CREATE PROCEDURE create_attendee(p_event_id INT, fn VARCHAR(30), ln VARCHAR(30))

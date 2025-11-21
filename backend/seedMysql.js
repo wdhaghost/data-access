@@ -113,7 +113,7 @@ function formatDocument(doc, format) {
             start: e.event.event_begin,
             end: e.event.event_finish,
             location: e.event.event_where,
-            max: e.event.max ? e.event.max: 0,
+            max: e.event.max ? e.event.max: null,
             attendees: (e.attendees || []).map(a => ({
                 fn: a.attendee_1,
                 ln: a.attendee_2,
