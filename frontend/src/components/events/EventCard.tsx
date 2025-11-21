@@ -81,7 +81,7 @@ export default function EventCard({
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-2 pb-3">
+      <CardContent className="space-y-2 pb-3 min-h-[120px]">
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div className="flex items-center gap-2 text-gray-600">
             <Calendar className="w-4 h-4 text-blue-500 shrink-0" />
