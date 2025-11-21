@@ -47,13 +47,13 @@ export default function EventRegistrationModal({
   return (
     <Dialog open={showForm} onOpenChange={setShowForm}>
       <DialogTrigger asChild>
-        <Button className="w-full">Participer à l'évènement</Button>
+        <Button className="w-full">Participer Ã  l'Ã©vÃ¨nement</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>S'inscrire à l'événement</DialogTitle>
+          <DialogTitle>S'inscrire Ã  l'Ã©vÃ¨nement</DialogTitle>
           <DialogDescription>
-            Veuillez entrer vos informations pour vous inscrire à "{name}".
+            Veuillez entrer vos informations pour vous inscrire Ã  "{name}".
           </DialogDescription>
         </DialogHeader>
 
@@ -73,10 +73,10 @@ export default function EventRegistrationModal({
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="firstName">Prénom</Label>
+            <Label htmlFor="firstName">PrÃ©nom</Label>
             <Input
               id="firstName"
-              placeholder="Votre prénom"
+              placeholder="Votre prÃ©nom"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               disabled={isLoading}
