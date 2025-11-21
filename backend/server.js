@@ -1,6 +1,5 @@
 require('dotenv').config({ path: '../.env' });
 
-// index.js
 const express = require("express");
 const mysql = require("mysql2/promise");
 
@@ -25,7 +24,6 @@ async function execute(sql, params = []) {
 }
 
 /* Routes pour les événements */
-
 app.get("/events", async (_req, res) => {
   try {
     const events = await execute("SELECT * FROM event ORDER BY start_date DESC");
