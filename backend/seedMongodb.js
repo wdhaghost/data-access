@@ -36,7 +36,6 @@ const insertInMongoDB = async (json_data) => {
 
     try {
         await client.connect();
-        console.log(`Connecté à MongoDB sur ${config.host}:${config.port}`);
 
         const db = client.db(config.database);
         const collection = db.collection(collection_type);
@@ -51,14 +50,12 @@ const insertInMongoDB = async (json_data) => {
         }
 
         const result = await collection.insertMany(dataToInsert);
-        console.log(`${result.insertedCount} document inséré dans la base '${config.database}', collection: ${collection_type}`);
 
     } catch (err) {
         console.error("Erreur lors de l'insertion:", err.message);
         process.exit(1);
     } finally {
         await client.close();
-        console.log("Connexion fermée");
     }
 }
 
