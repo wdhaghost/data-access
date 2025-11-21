@@ -44,6 +44,7 @@ export async function fetchApi<T = any>(
 
     return { data: json as T };
   } catch (err) {
+    console.error(err)
     return { error: "Impossible de joindre le serveur" };
   }
 }

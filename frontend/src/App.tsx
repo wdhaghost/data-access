@@ -2,8 +2,7 @@ import "./App.css";
 import { EventCardsList } from "./components/events/EventCardsList";
 import { useEffect, useState } from "react";
 import { formatEvents, type FormattedEvent, type ApiEvent } from "./services/formatEvents";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+import { fetchApi } from "./lib/utils";
 
 function App() {
   const [events, setEvents] = useState<FormattedEvent[]>([]);
@@ -14,16 +13,17 @@ function App() {
     const fetchEvents = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`${API_URL}/events`);
+        const { data, error: apiError } = await fetchApi<ApiEvent[]>("/events");
 
-        if (!response.ok) {
-          throw new Error("Erreur lors de la récupération des événements");
+        if (apiError) {
+          setError(apiError);
+          return;
         }
 
-        const data: ApiEvent[] = await response.json();
-        const formattedEvents = formatEvents(data);
-
-        setEvents(formattedEvents);
+        if (data) {
+          const formattedEvents = formatEvents(data);
+          setEvents(formattedEvents);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Une erreur est survenue");
       } finally {

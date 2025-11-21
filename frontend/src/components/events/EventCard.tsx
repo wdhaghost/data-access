@@ -10,8 +10,7 @@ import { Calendar, MapPin, Users, Clock } from "lucide-react";
 import type { EventType } from "@/types/EventType";
 import EventRegistrationModal from "./EventRegistrationModal";
 import { formatDate } from "@/services/formatDate";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+import { fetchApi } from "@/lib/utils";
 
 export default function EventCard({
   eventId,
@@ -34,31 +33,33 @@ export default function EventCard({
       return;
     }
 
+
     try {
       setIsLoading(true);
       setErrorMessage("");
       setSuccessMessage("");
 
-      const response = await fetch(`${API_URL}/events/${eventId}/attendees`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          first_name: firstName,
-          last_name: lastName,
-        }),
-      });
+      const { data, error } = await fetchApi<{ message: string }>(
+        `/events/${eventId}/attendees`,
+        {
+          method: "POST",
+          body: {
+            firstname: firstName,
+            lastname: lastName,
+          },
+        }
+      );
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setErrorMessage(data.error || "Erreur lors de l'inscription");
-      } else {
+      if (error) {
+        setErrorMessage(error);
+      } else if (data) {
         setSuccessMessage(data.message || "Inscription réussie !");
         setFirstName("");
         setLastName("");
-        setShowForm(false);
+
+        setTimeout(() => {
+          setShowForm(false);
+        }, 2000);
       }
     } catch (error: unknown) {
       setErrorMessage("Erreur de connexion au serveur");
