@@ -5,6 +5,6 @@ export type EventType = {
     endDate: Date;
     maxAttendees: number | null;
     location: string;
-    createdAt: string;
+    createdAt?: string;
     updatedAt?: string;
 };

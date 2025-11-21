@@ -44,8 +44,18 @@ export default function EventRegistrationModal({
   setErrorMessage,
   setSuccessMessage,
 }: EventRegistrationModalProps) {
+  const handleOpenChange = (open: boolean) => {
+    setShowForm(open);
+    if (!open) {
+      setErrorMessage("");
+      setSuccessMessage("");
+      setFirstName("");
+      setLastName("");
+    }
+  };
+
   return (
-    <Dialog open={showForm} onOpenChange={setShowForm}>
+    <Dialog open={showForm} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button className="w-full">Participer à l'évènement</Button>
       </DialogTrigger>
@@ -80,6 +90,7 @@ export default function EventRegistrationModal({
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               disabled={isLoading}
+              required
             />
           </div>
           <div className="space-y-2">
@@ -90,6 +101,7 @@ export default function EventRegistrationModal({
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               disabled={isLoading}
+              required
             />
           </div>
         </div>

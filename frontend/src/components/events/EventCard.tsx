@@ -20,7 +20,6 @@ export default function EventCard({
   endDate,
   maxAttendees,
   location,
-  createdAt,
 }: EventType) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -70,54 +69,44 @@ export default function EventCard({
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300 border-l-4 border-l-blue-500">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-2xl font-bold text-gray-800">
+    <Card className="group hover:shadow-xl transition-all duration-300 overflow-hidden border-0 bg-linear-to-br from-white to-blue-50/30">
+      <div className="absolute top-0 left-0 w-1 h-full bg-linear-to-b from-blue-500 to-blue-600" />
+
+      <CardHeader className="pb-2 pt-4">
+        <CardTitle className="text-xl font-bold text-gray-900">
           {name}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex items-start gap-3">
-          <Calendar className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
-          <div className="flex-1">
-            <p className="text-sm font-medium text-gray-600">Date de début</p>
-            <p className="text-base text-gray-900">{formatDate(startDate)}</p>
+
+      <CardContent className="space-y-2 pb-3">
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          <div className="flex items-center gap-2 text-gray-600">
+            <Calendar className="w-4 h-4 text-blue-500 shrink-0" />
+            <span className="truncate">{formatDate(startDate)}</span>
+          </div>
+
+          <div className="flex items-center gap-2 text-gray-600">
+            <Clock className="w-4 h-4 text-blue-500 shrink-0" />
+            <span className="truncate">{formatDate(endDate)}</span>
           </div>
         </div>
 
-        <div className="flex items-start gap-3">
-          <Clock className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
-          <div className="flex-1">
-            <p className="text-sm font-medium text-gray-600">Date de fin</p>
-            <p className="text-base text-gray-900">{formatDate(endDate)}</p>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-3">
-          <MapPin className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
-          <div className="flex-1">
-            <p className="text-sm font-medium text-gray-600">Lieu</p>
-            <p className="text-base text-gray-900">{location}</p>
-          </div>
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <MapPin className="w-4 h-4 text-blue-500 shrink-0" />
+          <span className="truncate">{location}</span>
         </div>
 
         {maxAttendees && (
-          <div className="flex items-start gap-3">
-            <Users className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-600">
-                Participants maximum
-              </p>
-              <p className="text-base text-gray-900">{maxAttendees}</p>
-            </div>
+          <div className="flex items-center gap-2 text-sm">
+            <Users className="w-4 h-4 text-blue-500 shrink-0" />
+            <span className="text-gray-600">
+              <span className="font-semibold text-blue-600">{maxAttendees}</span> participants max
+            </span>
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex-col gap-3 bg-gray-50 border-t">
-        <div className="flex items-center text-sm text-gray-500 w-full">
-          <Calendar className="w-4 h-4 mr-2" />
-          Créé le {new Date(createdAt).toLocaleDateString("fr-FR")}
-        </div>
+
+      <CardFooter className="flex-col gap-2 bg-linear-to-r from-gray-50 to-blue-50/50 border-t pt-3 pb-3">
         <EventRegistrationModal
           name={name}
           showForm={showForm}

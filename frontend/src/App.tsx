@@ -13,7 +13,6 @@ function App() {
           endDate={new Date("2025-03-15T17:00:00")}
           maxAttendees={50}
           location="Paris, France"
-          createdAt="2025-01-20T10:00:00"
         />
       </div>
     </div>
