@@ -49,7 +49,6 @@ async function main() {
             await migrateDoc(mysqlConn, doc, "DISISFINE");
         }
 
-        console.log("Migration terminée");
     } catch (err) {
         console.error("Erreur :", err);
     } finally {
