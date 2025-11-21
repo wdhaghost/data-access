@@ -54,7 +54,7 @@ CREATE PROCEDURE create_attendee(p_event_id INT, fn VARCHAR(30), ln VARCHAR(30))
 
         IF NOT is_full(actual_attendees, limit_attendees) THEN
             INSERT INTO attendee(event_id, first_name, last_name) VALUES (p_event_id, fn, ln);
-            SELECT 'Inscription reussie' AS message;
+            SELECT 'Inscription réussie' AS message;
         ELSE
             SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'L\'evenement est plein';

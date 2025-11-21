@@ -1,36 +1,49 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { Button } from '@/components/ui/button'
+import "./App.css";
+import { EventCardsList } from "./components/events/EventCardsList";
+import { useEffect, useState } from "react";
+import { formatEvents, type FormattedEvent, type ApiEvent } from "./services/formatEvents";
+import { fetchApi } from "./lib/utils";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [events, setEvents] = useState<FormattedEvent[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setIsLoading(true);
+        const { data, error: apiError } = await fetchApi<ApiEvent[]>("/events");
+
+        if (apiError) {
+          setError(apiError);
+          return;
+        }
+
+        if (data) {
+          const formattedEvents = formatEvents(data);
+          setEvents(formattedEvents);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Une erreur est survenue");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="min-h-screen h-screen bg-gray-100 flex flex-col">
+      <div className="flex-1 flex flex-col px-8 py-6">
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">Événements</h1>
+        <div className="flex-1 w-full">
+          <EventCardsList events={events} isLoading={isLoading} error={error} />
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <Button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </Button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
