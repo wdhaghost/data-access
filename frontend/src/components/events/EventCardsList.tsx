@@ -1,6 +1,6 @@
-import { EventCard } from './EventCard';
 import { Spinner } from '@/components/ui/spinner';
 import {Card, CardDescription} from "@/components/ui/card.tsx";
+import EventCard from './EventCard';
 
 interface Event {
   id: number;
@@ -47,7 +47,17 @@ export function EventCardsList({ events, isLoading, error }: EventCardsListProps
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
       {events.map((event) => (
-        <EventCard key={event.id} event={event} />
+        <EventCard
+          key={event.id}
+          eventId={event.id}
+          name={event.name}
+          startDate={new Date(event.startDate)}
+          endDate={new Date(event.endDate)}
+          maxAttendees={event.max_attendees}
+          location={event.location}
+          createdAt={event.createdAt}
+          updatedAt={event.updatedAt}
+        />
       ))}
     </div>
   );
