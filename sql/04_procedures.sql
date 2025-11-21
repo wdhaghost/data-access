@@ -107,6 +107,11 @@ CREATE PROCEDURE delete_event(event_id INT)
 -- 5 changer la date de début et de fin
 CREATE PROCEDURE update_date(event_id INT,new_start_date DATE ,new_end_date DATE)
     BEGIN
+        IF NOT EXISTS (SELECT 1 FROM event WHERE id = event_id) THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'Evenement introuvable';
+        END IF;
+
         IF new_end_date < new_start_date THEN
             SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'La date de fin doit etre posterieure à la date de debut';
@@ -116,11 +121,6 @@ CREATE PROCEDURE update_date(event_id INT,new_start_date DATE ,new_end_date DATE
         SET start_date = new_start_date,
             end_date = new_end_date
         WHERE id = event_id;
-
-        IF ROW_COUNT() = 0 THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Evenement introuvable';
-        END IF;
     END//
 
 DELIMITER ;
